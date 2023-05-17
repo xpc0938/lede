@@ -22,13 +22,27 @@ env:
   REPO_BRANCH: master
 
 jobs:
+  prebuild_test:
+    name: Prebuild Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # full history so checkpatch can check commit IDs in commit messages
+      - name: Update Git config
+        run: |
+          git config pull.rebase true
+          git config --global user.email "xpc0938@126.com"
+          git config --global user.name "pc.xue"
+      - name: Test
+        run: |
+          echo PWD: $PWD
+          gh release create v1.1 feeds.conf.default
 
   build_openwrt:
-
     name: Build OpenWrt Firmware
-
     runs-on: ubuntu-latest
-
     steps:
       - name: 主机系统信息
         run: |
