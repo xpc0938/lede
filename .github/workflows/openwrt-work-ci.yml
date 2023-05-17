@@ -81,21 +81,21 @@ jobs:
           git status
           git log -3
 
-      - name: 配置Kernel版本和额外的package包
+      - name: 配置到最新Kernel版本和新增额外的package包
         run: |
           cat >> ./feeds.conf.default <<EOF
           #by xpc
           #filebrowser kodexplorer
           src-git lienol https://github.com/Lienol/openwrt-package
           EOF
-
           sed -i 's/^[ \t]*//g' ./feeds.conf.default
+          sed -i 's/^#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
           head -v -n-0 feeds.conf.default
 
+          # switch to latest kernel
           current_linux_version=$(cat target/linux/x86/Makefile | grep "^KERNEL_PATCHVER:=" | awk -F"=" '{print $2}')
           # found lastest kernel version
-          target_linux_version=$(ls target/linux/x86/config-* | awk -F"-" '{print $NF}' |sort -V |tail -1)
-          
+          target_linux_version=$(ls target/linux/x86/config-* | awk -F"-" '{print $NF}' |sort -V |tail -1)   
           [ -n "$target_linux_version" ] || {
             echo "Found target_linux_version failure! Please check the result of command: \"ls target/linux/x86/config-* | awk -F"-" '{print $NF}' |sort -V |tail -1\""
             return 1
@@ -114,12 +114,12 @@ jobs:
 
       - name: Update feeds
         run: |
-          sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
       - name: Generate configuration file
         run: |
+          DATE=$(date +'%Y%m%d%H%M%S')
           rm -f ./.config*
           touch ./.config
           #
@@ -347,6 +347,8 @@ jobs:
           #
           sed -i 's/^[ \t]*//g' ./.config
           make defconfig
+          cp .config config-${DATE}
+          ./scripts/diffconfig.sh > diffconfig-${DATE}
           echo "======================= .config ==========================="
           cat .config
           echo "==================== .config end =========================="
@@ -373,11 +375,16 @@ jobs:
           rm -rf $(find ./bin/targets/ -type d -name "packages")
           cp -rf $(find ./bin/packages/ -type f -name "*.ipk") ./artifact/package/
           cp -rf $(find ./bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") ./artifact/buildinfo/
+          configfile=$(ls config-* diffconfig-*)
+          [ -n "${configfile}" ] && cp -rf ${configfile} ./artifact/buildinfo/
+          [ -f sha256sums ] && cp -rf sha256sums ./artifact/buildinfo/
+          # generate sha256sum for openwrt-squashfs-combined-efi
+          for file in $(ls bin/targets/*/*/openwrt-*-*-generic-squashfs-combined-efi.img.gz); do sha256sum $file > $file.sha256sum; done
 
-      - name: Upload buildinfo
+      - name: Upload buildinfo/configure
         uses: actions/upload-artifact@v3
         with:
-          name: OpenWrt_buildinfo
+          name: OpenWrt_buildinfo_configiure
           path: ./artifact/buildinfo/
 
       - name: Upload package
@@ -390,10 +397,16 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: OpenWrt_all_firmware
-          path: ./bin/targets/
+          path: |
+            ./bin/targets/
+            ./config-*
+            ./diffconfig-*
 
-      - name: Upload firmware openwrt-x86-64-generic-squashfs-combined-efi.img.gz
+      - name: Upload firmware openwrt-squashfs-combined-efi
         uses: actions/upload-artifact@v3
         with:
-          name: OpenWrt_firmware
-          path: ./bin/targets/*/*/openwrt-*-*-generic-squashfs-combined-efi.img.gz
+          name: OpenWrt_firmware_openwrt-squashfs-combined-efi
+          path: |
+            ./bin/targets/*/*/openwrt-*-*-generic-squashfs-combined-efi.img.gz*
+            ./config-*
+            ./diffconfig-*
