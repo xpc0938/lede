@@ -20,6 +20,8 @@ permissions:
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede.git
   REPO_BRANCH: master
+  #gh
+  GH_TOKEN: ${{ github.token }}
 
 jobs:
   prebuild_test:
