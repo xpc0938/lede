@@ -5,7 +5,7 @@
 #
 # Copyright (C) 2020 KFERMercer
 #
-name: OpenWrt-CI
+name: OpenWrt-work-CI
 
 on:
   push:
@@ -37,9 +37,25 @@ jobs:
           git config pull.rebase true
           git config --global user.email "xpc0938@126.com"
           git config --global user.name "pc.xue"
+          git remote add openwrt ${REPO_URL}
+          git remote -v
+          CURBRANCH=`git branch | grep "\*" | awk '{print $2}'`
+          git fetch openwrt ${REPO_BRANCH}
+          git checkout --track openwrt/${REPO_BRANCH}
+          git status
+          git checkout $CURBRANCH
+          git status
+          #rebase and merge
+          echo "Rebase and merge the latest ${REPO_BRANCH} branch (${REPO_URL}) to current ${CURBRANCH} branch ..."
+          ## rebase need same history: git rebase -r openwrt/${REPO_BRANCH}
+          #allow unrelated histories when merge
+          git merge --allow-unrelated-histories --no-edit ${REPO_BRANCH}
+          git status
+          git log -3
       - name: Test
         run: |
           echo PWD: $PWD
+          ls $PWD/
           gh release create v1.1 feeds.conf.default
 
   build_openwrt:
