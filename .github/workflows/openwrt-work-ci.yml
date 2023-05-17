@@ -15,7 +15,8 @@ on:
     - cron: '0 19 * * *'
 
 permissions:
-  contents: write
+  contents: read
+  #contents: write
   #pull-requests: write
   #packages: read
   #issues: write
@@ -62,7 +63,8 @@ jobs:
           echo PWD: $PWD
           ls $PWD/
           DATE=$(date +'%Y%m%d%H%M%S')
-          gh release create --generate-notes --latest ${DATE} feeds.conf.default
+          ##need permissions: contents: write
+          #gh release create --generate-notes --latest ${DATE} feeds.conf.default
 
   build_openwrt:
     name: Build OpenWrt Firmware
