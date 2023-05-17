@@ -20,6 +20,8 @@ permissions:
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede.git
   REPO_BRANCH: master
+  #git push
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   #gh
   GH_TOKEN: ${{ github.token }}
 
@@ -56,7 +58,8 @@ jobs:
         run: |
           echo PWD: $PWD
           ls $PWD/
-          gh release create v1.1 feeds.conf.default
+          DATE=$(date +'%Y%m%d%H%M%S')
+          gh release create --generate-notes --latest ${DATE} feeds.conf.default
 
   build_openwrt:
     name: Build OpenWrt Firmware
