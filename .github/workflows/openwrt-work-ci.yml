@@ -12,7 +12,8 @@ on:
     branches:
       - work
   schedule:
-    - cron: '0 19 * * *'
+    ## minute(0-59) hour(0-23) DayOfMonth(1-31) month(1-12) DayOfWeek(0-6)
+    - cron: '0 19 * * 4'
 
 permissions:
   #contents: read
@@ -409,7 +410,7 @@ jobs:
           du -h --max-depth=1 ./build_dir
           du -h --max-depth=1 ./bin
 
-      - name: Prepare artifact
+      - name: Prepare artifact and Release version
         run: |
           DATE="$(cat .compile_date)"
           mkdir -p ./artifact/package
@@ -427,7 +428,7 @@ jobs:
           ##need permissions: contents: write
           gh repo set-default xpc0938/lede
           release_files="$(ls bin/targets/*/*/openwrt-*-*-generic-squashfs-combined* bin/targets/*/*/*.buildinfo bin/targets/*/*/sha256sums)"
-          gh release create --generate-notes --latest ${DATE} ${release_files}
+          gh release create --generate-notes --latest openwrt-release-${DATE} ${release_files}
 
       - name: Upload buildinfo/configure
         uses: actions/upload-artifact@v3
