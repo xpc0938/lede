@@ -75,7 +75,7 @@ jobs:
           echo "####commitlog###"
           cat commit-log
           ##need permissions: contents: write
-          #gh release create --generate-notes --latest ${DATE} feeds.conf.default
+          #gh release create --latest ${DATE} -F commit-log feeds.conf.default
 
   build_openwrt:
     name: Build OpenWrt Firmware
