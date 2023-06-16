@@ -64,6 +64,16 @@ jobs:
           echo PWD: $PWD
           ls $PWD/
           DATE=$(date +'%Y%m%d%H%M%S')
+
+          lastcommitlog=$(git log openwrt/${REPO_BRANCH} -1 | grep "commit" | awk '{print $2}')
+          lastcommiturl=${REPO_URL%.git*}/${lastcommitlog}
+          echo -en "Commit url for the current release: ${lastcommiturl}\n\n" > commit-log
+
+          echo "openwrt/${REPO_BRANCH} commit history log:" | tee -a commit-log
+          git log openwrt/${REPO_BRANCH} -3 | tee -a commit-log
+
+          echo "####commitlog###"
+          cat commit-log
           ##need permissions: contents: write
           #gh release create --generate-notes --latest ${DATE} feeds.conf.default
 
