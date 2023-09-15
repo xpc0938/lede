@@ -387,6 +387,7 @@ jobs:
           CONFIG_boost-static-and-shared-libs=y
           CONFIG_boost-variant-release=y
           CONFIG_BUSYBOX_CONFIG_FEATURE_NSLOOKUP_LONG_OPTIONS=y
+          CONFIG_PACKAGE_tcpping=y
           EOF
 
           # LuCI主题:
