@@ -138,8 +138,8 @@ jobs:
           cat >> ./feeds.conf.default <<EOF
           #by xpc
           #filebrowser kodexplorer
-          #src-git lienol https://github.com/Lienol/openwrt-package
-          #newer filebrowser smartdns passwall
+          src-git lienol https://github.com/Lienol/openwrt-package
+          #newer smartdns passwall
           src-git kenzo https://github.com/kenzok8/openwrt-packages
           src-git small https://github.com/kenzok8/small
           EOF
