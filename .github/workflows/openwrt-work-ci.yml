@@ -389,6 +389,16 @@ jobs:
           CONFIG_boost-runtime-shared=y
           CONFIG_boost-static-and-shared-libs=y
           CONFIG_boost-variant-release=y
+          CONFIG_PACKAGE_procps-ng-top=y
+          CONFIG_PACKAGE_procps-ng-pgrep=y
+          CONFIG_PACKAGE_procps-ng-pkill=y
+          CONFIG_PACKAGE_procps-ng-vmstat=y
+          CONFIG_PACKAGE_procps-ng-watch=y
+          CONFIG_PACKAGE_atop=y
+          CONFIG_PACKAGE_btop=y
+          CONFIG_PACKAGE_netatop=y
+          CONFIG_PACKAGE_kmod-netatop=y
+          CONFIG_PACKAGE_dnstop=y
           CONFIG_PACKAGE_tcpping=y
           CONFIG_PACKAGE_bind-dig=y
           CONFIG_PACKAGE_bind-nslookup=y
