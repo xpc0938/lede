@@ -417,6 +417,11 @@ jobs:
           CONFIG_PACKAGE_luci-app-smartdns=y
           CONFIG_PACKAGE_smartdns=y
           EOF
+          # mosdns:
+          cat >> .config <<EOF
+          CONFIG_PACKAGE_luci-app-mosdns=y
+          CONFIG_PACKAGE_mosdns=y
+          EOF
 
           # passwall:
           cat >> .config <<EOF
