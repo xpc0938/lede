@@ -423,6 +423,20 @@ jobs:
           CONFIG_PACKAGE_luci-app-passwall=y
           CONFIG_PACKAGE_luci-app-passwall_INCLUDE_NaiveProxy=y
           EOF
+
+          # adguardhome
+          cat >> .config <<EOF
+          CONFIG_PACKAGE_luci-app-adguardhome=y
+          EOF
+          # openclash
+          cat >> .config <<EOF
+          CONFIG_PACKAGE_luci-app-openclash=y
+          EOF
+          # openvpn client and server
+          cat >> .config <<EOF
+          CONFIG_PACKAGE_luci-app-openvpn=y
+          CONFIG_PACKAGE_luci-app-openvpn-server=y
+          EOF
           #
           # ===============================================================
           #
