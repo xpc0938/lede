@@ -138,13 +138,14 @@ jobs:
           cat >> ./feeds.conf.default <<EOF
           #by xpc
           #filebrowser kodexplorer
-          src-git lienol https://github.com/Lienol/openwrt-package
+          #src-git lienol https://github.com/Lienol/openwrt-package
           #newer smartdns passwall
           src-git kenzo https://github.com/kenzok8/openwrt-packages
           src-git small https://github.com/kenzok8/small
           EOF
           sed -i 's/^[ \t]*//g' ./feeds.conf.default
           sed -i 's/^#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
+          sed -i '/helloworld.git$/s/$/;main/g' ./feeds.conf.default
           head -v -n-0 feeds.conf.default
 
           # switch to latest kernel
