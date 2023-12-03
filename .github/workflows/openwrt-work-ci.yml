@@ -443,6 +443,10 @@ jobs:
           CONFIG_PACKAGE_luci-app-openvpn=y
           CONFIG_PACKAGE_luci-app-openvpn-server=y
           EOF
+          # qemu guest agent
+          cat >> .config <<EOF
+          CONFIG_PACKAGE_qemu-ga=y
+          EOF
           #
           # ===============================================================
           #
