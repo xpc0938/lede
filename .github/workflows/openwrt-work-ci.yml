@@ -48,8 +48,10 @@ jobs:
          #mkdir -p /mnt/lede
          ln -sf /mnt $GITHUB_WORKSPACE/mnt
          echo Pwd:$PWD
-         ls -al /
-         mount
+         ls -al $GITHUB_WORKSPACE/..
+         echo Working...
+         ls -al $GITHUB_WORKSPACE/
+         whoami
       - name: Checkout
         uses: actions/checkout@v4
         with:
