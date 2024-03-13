@@ -81,9 +81,17 @@ jobs:
   build_openwrt:
     name: Build OpenWrt Firmware
     runs-on: ubuntu-latest
+    #switch working-dir
+    defaults:
+      run:
+        shell: bash
+        working-directory: /mnt
+    #switch working-dir end
     steps:
       - name: 主机系统信息
         run: |
+          echo PWD: $PWD
+          ls $PWD/
           echo "System information"
           head -v -n 1 /etc/issue
           head -v -n 2 /proc/version
