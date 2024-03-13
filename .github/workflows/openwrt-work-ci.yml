@@ -85,6 +85,7 @@ jobs:
       - name: 主机系统信息
         run: |
           echo "System information"
+          head -v -n 1 /etc/issue
           head -v -n 2 /proc/version
           head -v -n 8 /proc/meminfo
           echo "==> free -h <=="
@@ -145,7 +146,7 @@ jobs:
           EOF
           sed -i 's/^[ \t]*//g' ./feeds.conf.default
           sed -i 's/^#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
-          sed -i '/helloworld.git$/s/$/;main/g' ./feeds.conf.default
+          #sed -i '/helloworld.git$/s/$/;main/g' ./feeds.conf.default
           head -v -n-0 feeds.conf.default
 
           # switch to latest kernel
@@ -240,7 +241,6 @@ jobs:
           CONFIG_PACKAGE_boost-program_options=y
           CONFIG_PACKAGE_boost-system=y
           CONFIG_PACKAGE_bzip2=y
-          CONFIG_PACKAGE_default-xpc-settings=y
           # CONFIG_PACKAGE_dnsmasq_full_dhcpv6 is not set
           CONFIG_PACKAGE_exfat-fsck=y
           CONFIG_PACKAGE_exfat-mkfs=y
@@ -254,9 +254,6 @@ jobs:
           CONFIG_PACKAGE_jq=y
           CONFIG_PACKAGE_kmod-ac97=y
           CONFIG_PACKAGE_kmod-asn1-encoder=y
-          CONFIG_PACKAGE_kmod-crypto-cts=y
-          CONFIG_PACKAGE_kmod-crypto-rng=y
-          CONFIG_PACKAGE_kmod-crypto-sha256=y
           CONFIG_PACKAGE_kmod-dax=y
           CONFIG_PACKAGE_kmod-dm=y
           CONFIG_PACKAGE_kmod-dnsresolver=y
@@ -405,6 +402,10 @@ jobs:
           CONFIG_PACKAGE_bind-nslookup=y
           EOF
 
+          # 自定义版本
+          cat >> .config <<EOF
+          CONFIG_PACKAGE_default-xpc-settings=y
+          EOF
           # LuCI主题:
           cat >> .config <<EOF
           CONFIG_PACKAGE_luci-theme-argon=y
