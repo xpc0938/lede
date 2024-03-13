@@ -42,15 +42,16 @@ jobs:
     name: Prebuild Test
     runs-on: ubuntu-latest
     steps:
-      - name: Update Git config
+      - name: Prepare Env
         run: |
          echo "GITHUB_WORKSPACE:$GITHUB_WORKSPACE"
+         mkdir -p /mnt/lede
          ln -sf /mnt $GITHUB_WORKSPACE/mnt
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # full history so checkpatch can check commit IDs in commit messages
-          path: mnt
+          path: mnt/lede
           
       - name: Update Git config
         run: |
