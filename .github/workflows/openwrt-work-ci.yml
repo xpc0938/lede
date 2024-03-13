@@ -31,10 +31,10 @@ env:
   GH_TOKEN: ${{ github.token }}
 
 #switch working-dir
-defaults:
-  run:
-    shell: bash
-    working-directory: /mnt
+#defaults:
+ # run:
+  #  shell: bash
+  #  working-directory: /mnt
 #switch working-dir end
 
 jobs:
@@ -42,14 +42,18 @@ jobs:
     name: Prebuild Test
     runs-on: ubuntu-latest
     steps:
+      - name: Update Git config
+        run: |
+         echo "GITHUB_WORKSPACE:$GITHUB_WORKSPACE"
+         ln -sf /mnt $GITHUB_WORKSPACE/mnt
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0 # full history so checkpatch can check commit IDs in commit messages
+          path: mnt
           
       - name: Update Git config
         run: |
-          echo "GITHUB_WORKSPACE:$GITHUB_WORKSPACE"
           git config pull.rebase true
           git config --global user.email "xpc0938@126.com"
           git config --global user.name "pc.xue"
