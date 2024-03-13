@@ -93,6 +93,9 @@ jobs:
           echo "==> df -h <=="
           df -h
           head -v -n-0 /proc/cpuinfo
+          gcc -v
+          g++ -v
+          ld -v
 
       - name: Space cleanup and Initialization environment
         env:
