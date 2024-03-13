@@ -34,7 +34,7 @@ env:
 defaults:
   run:
     shell: bash
-    working-directory: /mnt/lede
+    working-directory: /mnt
 #switch working-dir end
 
 jobs:
