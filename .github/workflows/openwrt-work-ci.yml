@@ -29,7 +29,13 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   #gh
   GH_TOKEN: ${{ github.token }}
-  PRJ_WORKDIR: /mnt/lede
+
+#switch working-dir
+defaults:
+  run:
+    shell: bash
+    working-directory: /mnt/lede
+#switch working-dir end
 
 jobs:
   prebuild_test:
@@ -82,12 +88,6 @@ jobs:
   build_openwrt:
     name: Build OpenWrt Firmware
     runs-on: ubuntu-latest
-    #switch working-dir
-    defaults:
-      run:
-        shell: bash
-        working-directory: $PRJ_WORKDIR
-    #switch working-dir end
     steps:
       - name: 主机系统信息
         run: |
