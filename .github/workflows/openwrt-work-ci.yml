@@ -31,10 +31,10 @@ env:
   GH_TOKEN: ${{ github.token }}
 
 #switch working-dir
-#defaults:
- # run:
-  #  shell: bash
-  #  working-directory: /mnt
+defaults:
+  run:
+    shell: bash
+    working-directory: /mnt
 #switch working-dir end
 
 jobs:
