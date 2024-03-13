@@ -45,7 +45,7 @@ jobs:
       - name: Prepare Env
         run: |
          echo "GITHUB_WORKSPACE:$GITHUB_WORKSPACE"
-         mkdir -p /mnt/lede
+         #mkdir -p /mnt/lede
          ln -sf /mnt $GITHUB_WORKSPACE/mnt
          echo Pwd:$PWD
          ls -al /
