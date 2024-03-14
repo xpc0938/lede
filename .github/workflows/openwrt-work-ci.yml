@@ -51,13 +51,6 @@ jobs:
       - name: Prepare Env
         run: |
          echo "GITHUB_WORKSPACE:$GITHUB_WORKSPACE"
-         #mkdir -p /mnt/lede
-         #ln -sf /mnt $GITHUB_WORKSPACE/mnt
-         #echo Pwd:$PWD
-         #ls -al $GITHUB_WORKSPACE/..
-         #echo Working...
-         #ls -al $GITHUB_WORKSPACE/
-         whoami
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -66,24 +59,26 @@ jobs:
           
       - name: Update Git config
         run: |
-          git config pull.rebase true
-          git config --global user.email "xpc0938@126.com"
-          git config --global user.name "pc.xue"
-          git remote add openwrt ${REPO_URL}
-          git remote -v
-          CURBRANCH=`git branch | grep "\*" | awk '{print $2}'`
-          git fetch openwrt ${REPO_BRANCH}
-          git checkout --track openwrt/${REPO_BRANCH}
-          git status
-          git checkout $CURBRANCH
-          git status
-          #rebase and merge
-          echo "Rebase and merge the latest ${REPO_BRANCH} branch (${REPO_URL}) to current ${CURBRANCH} branch ..."
-          ## rebase need same history: git rebase -r openwrt/${REPO_BRANCH}
-          #allow unrelated histories when merge
-          git merge --allow-unrelated-histories --no-edit ${REPO_BRANCH}
-          git status
-          git log -3
+          if [ "$RUNNER_ENVIRONMENT" != "self-hosted" ]; then
+            git config pull.rebase true
+            git config --global user.email "xpc0938@126.com"
+            git config --global user.name "pc.xue"
+            git remote add openwrt ${REPO_URL}
+            git remote -v
+            CURBRANCH=`git branch | grep "\*" | awk '{print $2}'`
+            git fetch openwrt ${REPO_BRANCH}
+            git checkout --track openwrt/${REPO_BRANCH}
+            git status
+            git checkout $CURBRANCH
+            git status
+            #rebase and merge
+            echo "Rebase and merge the latest ${REPO_BRANCH} branch (${REPO_URL}) to current ${CURBRANCH} branch ..."
+            ## rebase need same history: git rebase -r openwrt/${REPO_BRANCH}
+            #allow unrelated histories when merge
+            git merge --allow-unrelated-histories --no-edit ${REPO_BRANCH}
+            git status
+            git log -3
+          fi
       - name: Test
         run: |
           echo PWD: $PWD
@@ -105,7 +100,13 @@ jobs:
           
   build_openwrt:
     name: Build OpenWrt Firmware
-    runs-on: [ubuntu-latest, self-hosted]
+    #mul-machine
+    strategy:
+      matrix:
+        os: [ubuntu-latest, self-hosted]
+        version: [10]
+    runs-on: ${{ matrix.os }}
+    #runs-on: ubuntu-latest
     #runs-on: self-hosted
     steps:
       - name: 主机系统信息
@@ -150,11 +151,19 @@ jobs:
             }
           else
             #github hosted
+            ls -al $GITHUB_WORKSPACE
             ci_user=$(id -un)
             ci_group=$(id -gn)
             sudo mkdir -p /mnt/lede
             sudo chown -R ${ci_user}:${ci_group} /mnt/lede
-            ln -sf /mnt $GITHUB_WORKSPACE/mnt
+            cd $GITHUB_WORKSPACE/ && cd .. && { \
+              sudo rm -rf lede
+              echo "Update $GITHUB_WORKSPACE to link ..."
+              ln -sf /mnt/lede $GITHUB_WORKSPACE
+              ls -al $GITHUB_WORKSPACE
+              cd $GITHUB_WORKSPACE
+            }
+
            
             docker rmi `docker images -q`
             sudo -E rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d /usr/local/lib/android
@@ -177,6 +186,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # full history so checkpatch can check commit IDs in commit messages
+          #path: mnt/lede
 
       - name: 同步coolsnowwolf最新的源码
         run: |
