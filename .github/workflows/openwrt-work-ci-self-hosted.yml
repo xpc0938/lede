@@ -100,8 +100,8 @@ jobs:
           
   build_openwrt:
     name: Build OpenWrt Firmware
-    #runs-on: ubuntu-latest
-    runs-on: self-hosted
+    runs-on: [ubuntu-latest, self-hosted]
+    #runs-on: self-hosted
     steps:
       - name: 主机系统信息
         run: |
