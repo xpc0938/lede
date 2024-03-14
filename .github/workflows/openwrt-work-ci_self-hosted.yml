@@ -40,8 +40,8 @@ env:
 jobs:
   prebuild_test:
     name: Prebuild Test
-    #runs-on: ubuntu-latest
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
+    #runs-on: self-hosted
     steps:
       - name: Prepare Env
         run: |
@@ -124,7 +124,9 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
+          echo "[INFO] ENV ..."
           env
+          echo "GITHUB_WORKSPACE:$GITHUB_WORKSPACE"
           if false; then
           docker rmi `docker images -q`
           sudo -E rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d /usr/local/lib/android
@@ -141,6 +143,9 @@ jobs:
           sudo -E timedatectl set-timezone "Asia/Shanghai"
           echo "==> df -h <=="
           df -h
+          #else
+          echo "Remove old lede prj in $GITHUB_WORKSPACE ..."
+          rm -rf $GITHUB_WORKSPACE/*
           fi
 
       - name: Checkout OpenWrt
