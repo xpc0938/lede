@@ -40,7 +40,12 @@ env:
 jobs:
   prebuild_test:
     name: Prebuild Test
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, self-hosted]
+        version: [10]
+    runs-on: ${{ matrix.os }}
+    #runs-on: ubuntu-latest
     #runs-on: self-hosted
     steps:
       - name: Prepare Env
