@@ -32,31 +32,32 @@ env:
 
 #switch working-dir
 #defaults:
- # run:
-  #  shell: bash
-  #  working-directory: /mnt
+  #run:
+    #shell: bash
+    #working-directory: /mnt
 #switch working-dir end
 
 jobs:
   prebuild_test:
     name: Prebuild Test
     runs-on: ubuntu-latest
+    #runs-on: self-hosted
     steps:
       - name: Prepare Env
         run: |
          echo "GITHUB_WORKSPACE:$GITHUB_WORKSPACE"
          #mkdir -p /mnt/lede
          #ln -sf /mnt $GITHUB_WORKSPACE/mnt
-         echo Pwd:$PWD
-         # ls -al $GITHUB_WORKSPACE/..
+         #echo Pwd:$PWD
+         #ls -al $GITHUB_WORKSPACE/..
          #echo Working...
-         # ls -al $GITHUB_WORKSPACE/
+         #ls -al $GITHUB_WORKSPACE/
          whoami
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # full history so checkpatch can check commit IDs in commit messages
-          path: mnt/lede
+          #path: mnt/lede
           
       - name: Update Git config
         run: |
@@ -99,7 +100,8 @@ jobs:
           
   build_openwrt:
     name: Build OpenWrt Firmware
-    runs-on: ubuntu-latest
+    runs-on: [ubuntu-latest, self-hosted]
+    #runs-on: self-hosted
     steps:
       - name: 主机系统信息
         run: |
@@ -126,18 +128,29 @@ jobs:
           env
           echo "GITHUB_WORKSPACE:$GITHUB_WORKSPACE"
           if [ "$RUNNER_ENVIRONMENT" = "self-hosted" ]; then
+            #self hosted
             echo "Remove old lede prj in $GITHUB_WORKSPACE ..."
-            rm -rf $GITHUB_WORKSPACE
+            cd $GITHUB_WORKSPACE && {
+              rm -rf .[^.]*
+              rm -rf *
+            }
             mkdir -p $GITHUB_WORKSPACE
 
             which gh || { \
-                sudo mkdir -p -m 755 /etc/apt/keyrings && wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
-                    && sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
-                    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
-                    && sudo apt update \
-                    && sudo apt install gh -y;
+              sudo mkdir -p -m 755 /etc/apt/keyrings && wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
+                  && sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+                  && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+                  && sudo apt update \
+                  && sudo apt install gh -y;
             }
           else
+            #github hosted
+            ci_user=$(id -un)
+            ci_group=$(id -gn)
+            sudo mkdir -p /mnt/lede
+            sudo chown -R ${ci_user}:${ci_group} /mnt/lede
+            ln -sf /mnt $GITHUB_WORKSPACE/mnt
+           
             docker rmi `docker images -q`
             sudo -E rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d /usr/local/lib/android
             sudo -E apt-mark hold grub-efi-amd64-signed
