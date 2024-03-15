@@ -239,7 +239,7 @@ jobs:
           head -v -n-0 feeds.conf.default
 
           # switch to latest kernel
-          use_lastest_kernel=no
+          use_lastest_kernel=yes
           if [ "$use_lastest_kernel" = "yes" ]; then
           current_linux_version=$(cat target/linux/x86/Makefile | grep "^KERNEL_PATCHVER:=" | awk -F"=" '{print $2}')
           # found lastest kernel version
