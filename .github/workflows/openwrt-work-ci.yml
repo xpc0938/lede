@@ -29,6 +29,8 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   #gh
   GH_TOKEN: ${{ github.token }}
+  #user configure
+  CI_ENV_INSTALL_LASTEST_KERNEL: yes
 
 #switch working-dir
 #defaults:
@@ -50,7 +52,7 @@ jobs:
     steps:
       - name: Prepare Env
         run: |
-         echo "GITHUB_WORKSPACE:$GITHUB_WORKSPACE"
+         echo "[Info] GITHUB_WORKSPACE:$GITHUB_WORKSPACE"
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -72,7 +74,7 @@ jobs:
             git checkout $CURBRANCH
             git status
             #rebase and merge
-            echo "Rebase and merge the latest ${REPO_BRANCH} branch (${REPO_URL}) to current ${CURBRANCH} branch ..."
+            echo "[Info] Rebase and merge the latest ${REPO_BRANCH} branch (${REPO_URL}) to current ${CURBRANCH} branch ..."
             ## rebase need same history: git rebase -r openwrt/${REPO_BRANCH}
             #allow unrelated histories when merge
             git merge --allow-unrelated-histories --no-edit ${REPO_BRANCH}
@@ -81,7 +83,7 @@ jobs:
           fi
       - name: Test
         run: |
-          echo PWD: $PWD
+          echo "[Info] PWD: $PWD"
           ls $PWD/
           DATE=$(date +'%Y%m%d%H%M%S')
 
@@ -111,7 +113,7 @@ jobs:
     steps:
       - name: 主机系统信息
         run: |
-          echo PWD: $PWD
+          echo "[Info] PWD: $PWD"
           ls $PWD/
           echo "System information"
           head -v -n 1 /etc/issue
@@ -122,6 +124,7 @@ jobs:
           echo "==> df -h <=="
           df -h
           head -v -n-0 /proc/cpuinfo
+          echo "Compile Tool Information"
           gcc -v
           g++ -v
           ld -v
@@ -132,10 +135,10 @@ jobs:
         run: |
           echo "[INFO] ENV ..."
           env
-          echo "GITHUB_WORKSPACE:$GITHUB_WORKSPACE"
+          echo "[Info] GITHUB_WORKSPACE:$GITHUB_WORKSPACE"
           if [ "$RUNNER_ENVIRONMENT" = "self-hosted" ]; then
             #self hosted
-            echo "Remove old lede prj in $GITHUB_WORKSPACE ..."
+            echo "[Info] Remove old lede prj in $GITHUB_WORKSPACE ..."
             cd $GITHUB_WORKSPACE && {
               rm -rf .[^.]*
               rm -rf *
@@ -165,11 +168,11 @@ jobs:
               sudo chown -R ${ci_user}:${ci_group} /mnt/lede
               cd $GITHUB_WORKSPACE/ && cd .. && { \
                 sudo rm -rf lede
-                echo "Linking $GITHUB_WORKSPACE to link ..."
+                echo "[Info] Linking $GITHUB_WORKSPACE to link ..."
                 ln -sf /mnt/lede $GITHUB_WORKSPACE
                 ls -al $GITHUB_WORKSPACE
                 workspace="$(readlink -f $GITHUB_WORKSPACE)"
-                echo "Linked $GITHUB_WORKSPACE to $(readlink -f $workspace)."
+                echo "[Info] Linked $GITHUB_WORKSPACE to $(readlink -f $workspace)."
                 cd $GITHUB_WORKSPACE
               }
             fi
@@ -177,7 +180,7 @@ jobs:
 
             sudo -E apt update
             if [ "$USING_MNT" = "1" ]; then
-              echo "Using \"$workspace\" as github workspace and there is enough space, ignore the cleanup package..."
+              echo "[Info] Using \"$workspace\" as github workspace and there is enough space, ignore the cleanup package..."
             else
               docker rmi `docker images -q`
               sudo -E rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d /usr/local/lib/android
@@ -216,7 +219,7 @@ jobs:
           git checkout $CURBRANCH
           git status
           #rebase and merge
-          echo "Rebase and merge the latest ${REPO_BRANCH} branch (${REPO_URL}) to current ${CURBRANCH} branch ..."
+          echo "[Info] Rebase and merge the latest ${REPO_BRANCH} branch (${REPO_URL}) to current ${CURBRANCH} branch ..."
           ## rebase need same history: git rebase -r openwrt/${REPO_BRANCH}
           #allow unrelated histories when merge
           git merge --allow-unrelated-histories --no-edit ${REPO_BRANCH}
@@ -239,16 +242,16 @@ jobs:
           head -v -n-0 feeds.conf.default
 
           # switch to latest kernel
-          use_lastest_kernel=yes
+          [ -n "$CI_ENV_INSTALL_LASTEST_KERNEL" ] && use_lastest_kernel=$CI_ENV_INSTALL_LASTEST_KERNEL || use_lastest_kernel=no
           if [ "$use_lastest_kernel" = "yes" ]; then
           current_linux_version=$(cat target/linux/x86/Makefile | grep "^KERNEL_PATCHVER:=" | awk -F"=" '{print $2}')
           # found lastest kernel version
           target_linux_version=$(ls target/linux/x86/config-* | awk -F"-" '{print $NF}' |sort -V |tail -1)   
           [ -n "$target_linux_version" ] || {
-            echo "Found target_linux_version failure! Please check the result of command: \"ls target/linux/x86/config-* | awk -F"-" '{print $NF}' |sort -V |tail -1\""
+            echo "[Err] Found target_linux_version failure! Please check the result of command: \"ls target/linux/x86/config-* | awk -F"-" '{print $NF}' |sort -V |tail -1\""
             return 1
           }
-          echo "Switch current kernel verison:${current_linux_version} to ${target_linux_version} ..."
+          echo "[Info] Switch current kernel verison:${current_linux_version} to ${target_linux_version} ..."
           sed -i "/^KERNEL_PATCHVER:=*/s/.*/KERNEL_PATCHVER:=${target_linux_version}/g" target/linux/x86/Makefile
           sed -i "/^KERNEL_TESTING_PATCHVER:=*/s/.*/KERNEL_TESTING_PATCHVER:=${current_linux_version}/g" target/linux/x86/Makefile
           fi
