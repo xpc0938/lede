@@ -323,7 +323,6 @@ jobs:
           CONFIG_PACKAGE_alsa-lib=y
           CONFIG_PACKAGE_alsa-ucm-conf=y
           CONFIG_PACKAGE_alsa-utils=y
-          # CONFIG_PACKAGE_amdgpu-firmware is not set
           CONFIG_PACKAGE_aria2=y
           CONFIG_PACKAGE_ariang=y
           # CONFIG_PACKAGE_attr is not set
@@ -349,7 +348,6 @@ jobs:
           CONFIG_PACKAGE_kmod-dax=y
           CONFIG_PACKAGE_kmod-dm=y
           CONFIG_PACKAGE_kmod-dnsresolver=y
-          # CONFIG_PACKAGE_kmod-drm-amdgpu is not set
           CONFIG_PACKAGE_kmod-fs-exportfs=y
           CONFIG_PACKAGE_kmod-fs-nfs=y
           CONFIG_PACKAGE_kmod-fs-nfs-common=y
