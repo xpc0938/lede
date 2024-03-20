@@ -242,7 +242,12 @@ jobs:
           head -v -n-0 feeds.conf.default
 
           # switch to latest kernel
-          [ -n "$CI_ENV_INSTALL_LASTEST_KERNEL" ] && use_lastest_kernel=$CI_ENV_INSTALL_LASTEST_KERNEL || use_lastest_kernel=no
+          if [ "$RUNNER_ENVIRONMENT" = "self-hosted" ]; then
+            [ -n "$CI_ENV_INSTALL_LASTEST_KERNEL" ] && use_lastest_kernel=$CI_ENV_INSTALL_LASTEST_KERNEL || use_lastest_kernel=no
+          else
+            # force using default kernel version for github-hosted.
+            use_lastest_kernel=no
+          fi
           if [ "$use_lastest_kernel" = "yes" ]; then
           current_linux_version=$(cat target/linux/x86/Makefile | grep "^KERNEL_PATCHVER:=" | awk -F"=" '{print $2}')
           # found lastest kernel version
@@ -602,30 +607,34 @@ jobs:
           }
 
       - name: Upload buildinfo/configure
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OpenWrt_buildinfo_configiure
+          overwrite: true
           path: ./artifact/buildinfo/
 
       - name: Upload package
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OpenWrt_package
+          overwrite: true
           path: ./artifact/package/
 
       - name: Upload all firmware
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OpenWrt_all_firmware
+          overwrite: true
           path: |
             ./bin/targets/
             ./config-*
             ./diffconfig-*
 
       - name: Upload firmware openwrt-squashfs-combined-efi
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OpenWrt_firmware_openwrt-squashfs-combined-efi
+          overwrite: true
           path: |
             ./bin/targets/*/*/openwrt-*-*-generic-squashfs-combined-efi.img.gz*
             ./config-*
