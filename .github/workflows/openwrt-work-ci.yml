@@ -582,17 +582,21 @@ jobs:
           for file in $(ls bin/targets/*/*/openwrt-*-*-generic-squashfs-combined-efi.img.gz); do sha256sum $file > $file.sha256sum; done
 
           #general release log
+          echo -en "Compile by ${RUNNER_ENVIRONMENT} ($(id -un)@$(hostname))\n\n" > commit-log
+          echo -en "Buildinfo.version: $(cat bin/targets/x86/64/version.buildinfo | head -1)\n" | tee -a commit-log
+          echo -en "Kernel.version: $(cat bin/targets/*/*/*.manifest | grep "^kernel" | awk -F"-" '{print $2}' | awk '{print $1}')\n" | tee -a commit-log
           lastcommit=$(git log openwrt/${REPO_BRANCH} -1 | grep "commit" | awk '{print $2}')
           lastcommiturl=${REPO_URL%.git*}/commit/${lastcommit}
-          echo -en "Compile by ${RUNNER_ENVIRONMENT} ($(id -un)@$(hostname))\n\n" > commit-log
           echo -en "Commit url for the current release: ${lastcommiturl}\n\n" | tee -a commit-log
           echo "openwrt/${REPO_BRANCH} commit history log:" | tee -a commit-log
           git log openwrt/${REPO_BRANCH} -3 | tee -a commit-log
+          echo -en "\nImages Sha256sums:\n" | tee -a commit-log
+          echo -en "$(cat bin/targets/*/*/sha256sums | grep "\.img" | grep "combined" | awk '{temp=$1; $1=$2; $2=temp; sub(/^\*/, "", $1); print}')\n" | tee -a commit-log
 
           #upload release package
           ##need permissions: contents: write
           gh repo set-default xpc0938/lede
-          release_files="$(ls bin/targets/*/*/openwrt-*-*-generic-squashfs-combined* bin/targets/*/*/*.buildinfo bin/targets/*/*/sha256sums)"
+          release_files="$(ls bin/targets/*/*/openwrt-*-*-generic-squashfs-combined* bin/targets/*/*/*.buildinfo bin/targets/*/*/*.manifest bin/targets/*/*/sha256sums)"
           [ -f commit-log ] && gh release create --latest openwrt-release-${DATE} -F commit-log ${release_files} || {
             gh release create --generate-notes --latest openwrt-release-${DATE} ${release_files}
           }
