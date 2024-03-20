@@ -584,7 +584,8 @@ jobs:
           #general release log
           lastcommit=$(git log openwrt/${REPO_BRANCH} -1 | grep "commit" | awk '{print $2}')
           lastcommiturl=${REPO_URL%.git*}/commit/${lastcommit}
-          echo -en "Commit url for the current release: ${lastcommiturl}\n\n" > commit-log
+          echo -en "Compile by ${RUNNER_ENVIRONMENT} ($(id -un)@$(hostname))\n\n" > commit-log
+          echo -en "Commit url for the current release: ${lastcommiturl}\n\n" | tee -a commit-log
           echo "openwrt/${REPO_BRANCH} commit history log:" | tee -a commit-log
           git log openwrt/${REPO_BRANCH} -3 | tee -a commit-log
 
