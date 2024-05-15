@@ -512,6 +512,13 @@ jobs:
           CONFIG_PACKAGE_luci-theme-opentomcat=y
           EOF
 
+          #edit text
+          cat >> .config <<EOF
+          CONFIG_PACKAGE_git=y
+          CONFIG_PACKAGE_nano-full=y
+          CONFIG_PACKAGE_vim-full=y
+          EOF
+
           # smartdns:
           cat >> .config <<EOF
           CONFIG_PACKAGE_luci-app-smartdns=y
