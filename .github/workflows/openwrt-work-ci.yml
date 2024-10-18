@@ -43,6 +43,9 @@ jobs:
   prebuild_test:
     name: Prebuild Test
     strategy:
+      # If fail-fast is true, GitHub will cancel all in-progress and queued jobs in the matrix if any job in the matrix fails. 
+      # This property defaults to true.
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, self-hosted]
         version: [10]
@@ -104,6 +107,9 @@ jobs:
     name: Build OpenWrt Firmware
     #mul-machine
     strategy:
+      # If fail-fast is true, GitHub will cancel all in-progress and queued jobs in the matrix if any job in the matrix fails. 
+      # This property defaults to true.
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, self-hosted]
         version: [10]
