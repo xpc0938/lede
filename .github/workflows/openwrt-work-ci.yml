@@ -511,7 +511,7 @@ jobs:
           EOF
           # LuCI主题: (web issue in 20241029)
           #cat >> .config <<EOF
-          #CONFIG_PACKAGE_luci-theme-argon=y 
+          CONFIG_PACKAGE_luci-theme-argon=y 
           #CONFIG_PACKAGE_luci-theme-design=y
           #CONFIG_PACKAGE_luci-theme-opentomcat=y
           #EOF
