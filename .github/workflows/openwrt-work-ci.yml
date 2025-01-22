@@ -510,11 +510,11 @@ jobs:
           CONFIG_PACKAGE_default-xpc-settings=y
           EOF
           # LuCI主题: (web issue in 20241029)
-          #cat >> .config <<EOF
+          cat >> .config <<EOF
           CONFIG_PACKAGE_luci-theme-argon=y 
           #CONFIG_PACKAGE_luci-theme-design=y
           #CONFIG_PACKAGE_luci-theme-opentomcat=y
-          #EOF
+          EOF
 
           #edit text
           cat >> .config <<EOF
