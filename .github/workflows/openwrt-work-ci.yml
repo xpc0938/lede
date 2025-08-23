@@ -466,7 +466,7 @@ jobs:
           CONFIG_PACKAGE_sed=y
           CONFIG_PACKAGE_sgdisk=y
           CONFIG_PACKAGE_shairport-sync-openssl=y
-          CONFIG_PACKAGE_strace=y
+          # CONFIG_PACKAGE_strace is not set
           CONFIG_PACKAGE_tar=y
           CONFIG_PACKAGE_tcpdump=y
           CONFIG_PACKAGE_transmission-daemon-openssl=y
