@@ -234,7 +234,6 @@ jobs:
 
       - name: 配置到最新Kernel版本和新增额外的package包
         run: |
-          sed -i 's/^[ \t]*//g' ./feeds.conf.default
           sed -i '1i src-git kenzo https://github.com/kenzok8/openwrt-packages' ./feeds.conf.default
           sed -i '2i src-git small https://github.com/kenzok8/small' ./feeds.conf.default
           cat >> ./feeds.conf.default <<EOF
@@ -243,6 +242,7 @@ jobs:
           #src-git lienol https://github.com/Lienol/openwrt-package
           #newer smartdns passwall
           EOF
+          sed -i 's/^[ \t]*//g' ./feeds.conf.default
           sed -i 's/^#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
           #sed -i '/helloworld.git$/s/$/;main/g' ./feeds.conf.default
           head -v -n-0 feeds.conf.default
