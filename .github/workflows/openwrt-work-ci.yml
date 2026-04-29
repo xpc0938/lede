@@ -273,6 +273,8 @@ jobs:
           #luci theme web issue at 20241029
           #git clone https://github.com/openwrt-develop/luci-theme-atmaterial.git
           #git clone https://github.com/Leo-Jo-My/luci-theme-opentomcat.git
+          # theme-glass:20260429
+          git clone https://github.com/rchen14b/luci-theme-glass.git
           # my-settings
           git clone https://github.com/xpc0938/default-xpc-settings.git
 
@@ -517,7 +519,8 @@ jobs:
           EOF
           # LuCI主题: (web issue in 20241029)
           cat >> .config <<EOF
-          CONFIG_PACKAGE_luci-theme-argon=y 
+          CONFIG_PACKAGE_luci-theme-argon=y
+          CONFIG_PACKAGE_luci-theme-glass=y
           # CONFIG_PACKAGE_luci-theme-design is not set
           # CONFIG_PACKAGE_luci-theme-opentomcat is not set
           EOF
